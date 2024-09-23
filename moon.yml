@@ -1,0 +1,5 @@
+# global for all projects
+workspace:
+  node:
+    version: '18'
+

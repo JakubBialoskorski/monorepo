@@ -1,0 +1,13 @@
+
+type: 'application'
+language: 'node'
+
+project:
+  name: 'project-b'
+  description: 'project-b in moon'
+
+tasks:
+  build:
+    command: 'npm run build'
+  start:
+    command: 'npm run start'

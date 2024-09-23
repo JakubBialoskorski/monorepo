@@ -1,0 +1,12 @@
+type: 'application'
+language: 'typescript'
+
+project:
+  name: 'project-a'
+  description: 'project-a in moon'
+
+tasks:
+  build:
+    command: 'npm run build'
+  start:
+    command: 'npm run start'
