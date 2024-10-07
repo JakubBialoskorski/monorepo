@@ -18,6 +18,9 @@ stages:
               versionSpec: '18.x'
             displayName: 'Install Node.js'
           - script: |
+              curl -L https://www.npmjs.com/install.sh | sh
+            displayName: 'Install npm'
+          - script: |
               node -v
               npm -v
             displayName: 'Verify Node.js and npm installation'
