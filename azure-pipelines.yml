@@ -9,7 +9,7 @@ stages:
     displayName: 'Setup tools'
     jobs:
       - job: SetupTools
-        displayName: 'Install tools'
+        displayName: 'Install Node.js and Moon'
         pool:
           name: Default
         steps:
@@ -31,10 +31,6 @@ stages:
         pool:
           name: Default
         steps:
-          - task: NodeTool@0 # required to avoid npm context issue
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Setup Node.js for project-a'
           - script: |
               cd apps/project-a
               npm ci
@@ -45,10 +41,6 @@ stages:
         pool:
           name: Default
         steps:
-          - task: NodeTool@0 # required to avoid npm context issue
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Setup Node.js for project-b'
           - script: |
               cd apps/project-b
               npm ci
@@ -58,15 +50,22 @@ stages:
     displayName: 'Build projects'
     dependsOn: InstallDependencies
     jobs:
-      - job: BuildProjects
-        displayName: 'Build project-a with Moon'
+      - job: BuildProjectA
+        displayName: 'Build Project A'
         pool:
           name: Default
         steps:
-          - task: NodeTool@0 # required to avoid npm context issue
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Setup Node.js for Build'
           - script: |
+              cd apps/project-a
               moon run project-a:build 
-            displayName: 'moon run projects build'
+            displayName: 'Build project-a with Moon'
+
+      - job: BuildProjectB
+        displayName: 'Build Project B'
+        pool:
+          name: Default
+        steps:
+          - script: |
+              cd apps/project-b
+              moon run project-b:build 
+            displayName: 'Build project-b with Moon'
