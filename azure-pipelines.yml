@@ -17,13 +17,12 @@ stages:
             inputs:
               versionSpec: '18.x'
             displayName: 'Install Node.js'
-          - script: |
-              curl -L https://www.npmjs.com/install.sh | sh
-            displayName: 'Install npm'
+
           - script: |
               node -v
               npm -v
             displayName: 'Verify Node.js and npm installation'
+            
           - script: |
               npm install -g @moonrepo/cli
             displayName: 'Install Moon'
@@ -32,15 +31,7 @@ stages:
     displayName: 'Install dependencies for projects'
     dependsOn: Setup
     jobs:
-      - job: InstallNpm
-        displayName: 'Install npm'
-        pool:
-          name: Default
-        steps:
-          - script: |
-              curl -L https://www.npmjs.com/install.sh | sh
-            displayName: 'Install npm'
-            
+
       - job: InstallProjectA
         displayName: 'Install dependencies for project-a'
         pool:
