@@ -11,6 +11,10 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
+    npm install -g @vue/cli
+  displayName: 'Install Vue CLI'
+
+- script: |
     npm install -g @moonrepo/cli
   displayName: 'Install moon'
 
