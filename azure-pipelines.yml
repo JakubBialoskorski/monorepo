@@ -4,73 +4,26 @@ trigger:
 pool:
   name: Default
 
-stages:
-  - stage: Setup
-    displayName: 'Setup Node.js and Moon'
-    jobs:
-      - job: InstallNodeAndMoon
-        displayName: 'Install Node.js and Moon'
-        pool:
-          name: Default
-        steps:
-          - task: NodeTool@0
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Install Node.js'
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '18.x'
+  displayName: 'Install Node.js'
 
-          - script: |
-              node -v
-              npm -v
-            displayName: 'Verify Node.js and npm installation'
+- script: |
+    npm install -g @moonrepo/cli
+  displayName: 'Install moon'
 
-          - script: |
-              npm install -g @moonrepo/cli
-            displayName: 'Install Moon'
+- script: |
+    cd apps/project-a
+    npm install
+  displayName: 'Install dependencies for project-a'
 
-  - stage: InstallDependencies
-    displayName: 'Install dependencies for projects'
-    dependsOn: Setup
-    jobs:
+- script: |
+    cd apps/project-b
+    npm install
+  displayName: 'Install dependencies for project-b'
 
-      - job: SetupNodeJS
-        displayName: 'Setup node.js'
-        pool:
-          name: Default
-        steps:
-          - task: NodeTool@0
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Setup Node.js'
-
-      - job: InstallProjectA
-        displayName: 'Install dependencies for project-a'
-        pool:
-          name: Default
-        steps:
-          - script: |
-              cd apps/project-a
-              npm install
-            displayName: 'Install dependencies for project-a'
-
-      - job: InstallProjectB
-        displayName: 'Install dependencies for project-b'
-        pool:
-          name: Default
-        steps:
-          - script: |
-              cd apps/project-b
-              npm install
-            displayName: 'Install dependencies for project-b'
-
-  - stage: Build
-    displayName: 'Build projects'
-    dependsOn: InstallDependencies
-    jobs:
-      - job: BuildProjects
-        displayName: 'Build project-a and project-b'
-        pool:
-          name: Default
-        steps:
-          - script: |
-              moon run project-a:build project-b:build
-            displayName: 'moon run projects build'
+- script: |
+    moon run project-a:build project-b:build
+  displayName: 'moon run projects build'
