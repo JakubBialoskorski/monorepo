@@ -22,7 +22,7 @@ stages:
               node -v
               npm -v
             displayName: 'Verify Node.js and npm installation'
-            
+
           - script: |
               npm install -g @moonrepo/cli
             displayName: 'Install Moon'
@@ -31,6 +31,16 @@ stages:
     displayName: 'Install dependencies for projects'
     dependsOn: Setup
     jobs:
+
+      - job: Setup node.js
+        displayName: 'Setup node.js'
+        pool:
+          name: Default
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Setup Node.js'
 
       - job: InstallProjectA
         displayName: 'Install dependencies for project-a'
