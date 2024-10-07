@@ -31,6 +31,11 @@ stages:
         pool:
           name: Default
         steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Install Node.js for project-a'
+            
           - script: |
               cd apps/project-a
               npm install
@@ -41,6 +46,11 @@ stages:
         pool:
           name: Default
         steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Install Node.js for project-b'
+            
           - script: |
               cd apps/project-b
               npm install
@@ -55,6 +65,11 @@ stages:
         pool:
           name: Default
         steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Install Node.js for Build'
+            
           - script: |
               moon run project-a:build project-b:build
             displayName: 'moon run projects build'
