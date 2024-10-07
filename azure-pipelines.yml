@@ -9,7 +9,7 @@ stages:
     displayName: 'Setup tools'
     jobs:
       - job: SetupTools
-        displayName: 'Install Node.js and tools'
+        displayName: 'Install tools'
         pool:
           name: Default
         steps:
@@ -19,8 +19,8 @@ stages:
             displayName: 'Install Node.js'
 
           - script: |
-              npm install -g @moonrepo/cli vue-cli-service react react-scripts
-            displayName: 'Install Moon, Vue CLI, and React Scripts'
+              npm install -g @moonrepo/cli
+            displayName: 'Install Moon'
 
   - stage: InstallDependencies
     displayName: 'Install dependencies for projects'
