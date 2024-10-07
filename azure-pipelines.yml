@@ -65,7 +65,7 @@ stages:
     dependsOn: InstallDependencies
     jobs:
       - job: BuildProjects
-        displayName: 'Build project-a with Moon'
+        displayName: 'Build project-a and project-b with Moon'
         pool:
           name: Default
         steps:
