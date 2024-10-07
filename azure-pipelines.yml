@@ -6,7 +6,7 @@ pool:
 
 stages:
   - stage: Setup
-    displayName: 'Setup Environment'
+    displayName: 'Setup tools'
     jobs:
       - job: SetupNodeAndMoon
         displayName: 'Install Node.js and Moon'
@@ -17,13 +17,12 @@ stages:
             inputs:
               versionSpec: '18.x'
             displayName: 'Install Node.js'
-
           - script: |
               npm install -g @moonrepo/cli
             displayName: 'Install moon'
 
   - stage: InstallDependencies
-    displayName: 'Install Dependencies'
+    displayName: 'Install dependencies for projects'
     dependsOn: Setup
     jobs:
       - job: InstallDeps
@@ -35,14 +34,13 @@ stages:
               cd apps/project-a
               npm install
             displayName: 'Install dependencies for project-a'
-
           - script: |
               cd apps/project-b
               npm install
             displayName: 'Install dependencies for project-b'
 
   - stage: Build
-    displayName: 'Build Projects'
+    displayName: 'Build projects'
     dependsOn: InstallDependencies
     jobs:
       - job: BuildProjects
