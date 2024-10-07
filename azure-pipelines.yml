@@ -59,7 +59,7 @@ stages:
     dependsOn: InstallDependencies
     jobs:
       - job: BuildProjects
-        displayName: 'Build project-a and project-b'
+        displayName: 'Build project-a with Moon'
         pool:
           name: Default
         steps:
@@ -68,5 +68,5 @@ stages:
               versionSpec: '18.x'
             displayName: 'Setup Node.js for Build'
           - script: |
-              moon run project-a:build project-b:build
+              moon run project-a:build 
             displayName: 'moon run projects build'
