@@ -37,7 +37,7 @@ stages:
             displayName: 'Setup Node.js for project-a'
           - script: |
               cd apps/project-a
-              npm install
+              npm ci
             displayName: 'Install dependencies for project-a'
 
       - job: InstallProjectB
@@ -51,9 +51,8 @@ stages:
             displayName: 'Setup Node.js for project-b'
           - script: |
               cd apps/project-b
-              npm install
-              ls -al node_modules
-            displayName: 'Install dependencies for project-b and list node_modules for debugging'
+              npm ci
+            displayName: 'Install dependencies for project-b'
 
   - stage: Build
     displayName: 'Build projects'
