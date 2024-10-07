@@ -4,26 +4,52 @@ trigger:
 pool:
   name: Default
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '18.x'
-  displayName: 'Install Node.js'
+stages:
+  - stage: Setup
+    displayName: 'Setup Environment'
+    jobs:
+      - job: SetupNodeAndMoon
+        displayName: 'Install Node.js and Moon'
+        pool:
+          name: Default
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Install Node.js'
 
-- script: |
-    npm install -g @moonrepo/cli
-  displayName: 'Install moon'
+          - script: |
+              npm install -g @moonrepo/cli
+            displayName: 'Install moon'
 
-- script: |
-    cd apps/project-a
-    npm install
-  displayName: 'Install dependencies for project-a'
+  - stage: InstallDependencies
+    displayName: 'Install Dependencies'
+    dependsOn: Setup
+    jobs:
+      - job: InstallDeps
+        displayName: 'Install dependencies for projects'
+        pool:
+          name: Default
+        steps:
+          - script: |
+              cd apps/project-a
+              npm install
+            displayName: 'Install dependencies for project-a'
 
-- script: |
-    cd apps/project-b
-    npm install
-  displayName: 'Install dependencies for project-b'
+          - script: |
+              cd apps/project-b
+              npm install
+            displayName: 'Install dependencies for project-b'
 
-- script: |
-    moon run project-a:build project-b:build
-  displayName: 'moon run projects build'
+  - stage: Build
+    displayName: 'Build Projects'
+    dependsOn: InstallDependencies
+    jobs:
+      - job: BuildProjects
+        displayName: 'Build project-a and project-b'
+        pool:
+          name: Default
+        steps:
+          - script: |
+              moon run project-a:build project-b:build
+            displayName: 'moon run projects build'
