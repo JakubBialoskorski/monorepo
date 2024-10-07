@@ -6,41 +6,18 @@ pool:
 
 stages:
   - stage: Setup
-    displayName: 'Setup tools'
+    displayName: 'Setup Node.js and Moon'
     jobs:
-      - job: SetupTools
-        displayName: 'Install tools'
+      - job: InstallNodeAndMoon
+        displayName: 'Install Node.js and Moon'
         pool:
           name: Default
         steps:
-          # Clean up the temp directory before installation
-          - script: |
-              echo "Cleaning up temp directory..."
-              rm -rf /home/ubuntu/azure_agent/_work/_temp/*
-            displayName: 'Clean temp directory'
-
-          # Install Node.js
           - task: NodeTool@0
             inputs:
               versionSpec: '18.x'
             displayName: 'Install Node.js'
-            
-          # Check Node.js version
-          - script: |
-              node -v
-            displayName: 'Verify Node.js installation'
 
-          # Install npm manually
-          - script: |
-              npm install -g npm@latest
-            displayName: 'Install latest npm'
-
-          # Check npm version
-          - script: |
-              npm -v
-            displayName: 'Verify npm installation'
-
-          # Install Moon
           - script: |
               npm install -g @moonrepo/cli
             displayName: 'Install Moon'
@@ -54,15 +31,9 @@ stages:
         pool:
           name: Default
         steps:
-          # Verify Node.js and npm availability
-          - script: |
-              node -v
-              npm -v
-            displayName: 'Verify Node.js and npm installation for project-a'
-          
           - script: |
               cd apps/project-a
-              npm ci
+              npm install
             displayName: 'Install dependencies for project-a'
 
       - job: InstallProjectB
@@ -70,15 +41,9 @@ stages:
         pool:
           name: Default
         steps:
-          # Verify Node.js and npm availability
-          - script: |
-              node -v
-              npm -v
-            displayName: 'Verify Node.js and npm installation for project-b'
-          
           - script: |
               cd apps/project-b
-              npm ci
+              npm install
             displayName: 'Install dependencies for project-b'
 
   - stage: Build
@@ -86,16 +51,10 @@ stages:
     dependsOn: InstallDependencies
     jobs:
       - job: BuildProjects
-        displayName: 'Build project-a with Moon'
+        displayName: 'Build project-a and project-b'
         pool:
           name: Default
         steps:
-          # Verify Node.js and npm availability
           - script: |
-              node -v
-              npm -v
-            displayName: 'Verify Node.js and npm installation for Build'
-          
-          - script: |
-              moon run project-a:build 
-            displayName: 'moon run project-a build'
+              moon run project-a:build project-b:build
+            displayName: 'moon run projects build'
