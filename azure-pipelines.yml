@@ -10,24 +10,20 @@ steps:
     versionSpec: '18.x'
   displayName: 'Install Node.js'
 
-# Install moon globally using npm
 - script: |
     npm install -g @moonrepo/cli
   displayName: 'Install moon'
 
-# Install dependencies for project-a
 - script: |
     cd apps/project-a
     npm install
   displayName: 'Install dependencies for project-a'
 
-# Install dependencies for project-b
 - script: |
     cd apps/project-b
     npm install
   displayName: 'Install dependencies for project-b'
 
-# Run the moon build for multiple projects
 - script: |
     moon run project-a:build project-b:build
   displayName: 'moon run projects build'
