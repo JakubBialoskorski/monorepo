@@ -32,7 +32,7 @@ stages:
     dependsOn: Setup
     jobs:
 
-      - job: Setup node.js
+      - job: SetupNodeJS
         displayName: 'Setup node.js'
         pool:
           name: Default
