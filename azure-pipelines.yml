@@ -19,11 +19,19 @@ stages:
               rm -rf /home/ubuntu/azure_agent/_work/_temp/*
             displayName: 'Clean temp directory'
 
+          # Install Node.js
           - task: NodeTool@0
             inputs:
               versionSpec: '18.x'
             displayName: 'Install Node.js'
+            
+          # Add a step to print the Node.js and npm version to verify installation
+          - script: |
+              node -v
+              npm -v
+            displayName: 'Verify Node.js and npm installation'
 
+          # Install Moon
           - script: |
               npm install -g @moonrepo/cli
             displayName: 'Install Moon'
@@ -37,10 +45,12 @@ stages:
         pool:
           name: Default
         steps:
-          - task: NodeTool@0 # required to avoid npm context issue
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Setup Node.js for project-a'
+          # Verify Node.js and npm availability
+          - script: |
+              node -v
+              npm -v
+            displayName: 'Verify Node.js and npm installation for project-a'
+          
           - script: |
               cd apps/project-a
               npm ci
@@ -51,10 +61,12 @@ stages:
         pool:
           name: Default
         steps:
-          - task: NodeTool@0 # required to avoid npm context issue
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Setup Node.js for project-b'
+          # Verify Node.js and npm availability
+          - script: |
+              node -v
+              npm -v
+            displayName: 'Verify Node.js and npm installation for project-b'
+          
           - script: |
               cd apps/project-b
               npm ci
@@ -65,14 +77,16 @@ stages:
     dependsOn: InstallDependencies
     jobs:
       - job: BuildProjects
-        displayName: 'Build project-a and project-b with Moon'
+        displayName: 'Build project-a with Moon'
         pool:
           name: Default
         steps:
-          - task: NodeTool@0 # required to avoid npm context issue
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Setup Node.js for Build'
+          # Verify Node.js and npm availability
           - script: |
-              moon run project-a:build project-b:build
-            displayName: 'moon run projects build'
+              node -v
+              npm -v
+            displayName: 'Verify Node.js and npm installation for Build'
+          
+          - script: |
+              moon run project-a:build 
+            displayName: 'moon run project-a build'
