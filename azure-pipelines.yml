@@ -6,10 +6,10 @@ pool:
 
 stages:
   - stage: Setup
-    displayName: 'Setup tools'
+    displayName: 'Setup tools and install dependencies'
     jobs:
-      - job: SetupNodeAndMoon
-        displayName: 'Install Node.js and Moon'
+      - job: SetupTools
+        displayName: 'Install node.js, moon, react and vue.js'
         pool:
           name: Default
         steps:
@@ -20,42 +20,24 @@ stages:
 
           - script: |
               npm install -g @moonrepo/cli
-            displayName: 'Install moon'
-
-          - script: |
-              node -v
-              npm -v
-            displayName: 'Check Node.js and npm versions'
+              npm install -g vue-cli-service
+              npm install -g react-scripts
+            displayName: 'Install Moon, Vue CLI, and React Scripts'
 
   - stage: InstallDependencies
     displayName: 'Install dependencies for projects'
     dependsOn: Setup
     jobs:
-      - job: InstallProjectA
-        displayName: 'Install dependencies for project-a'
+      - job: InstallDeps
+        displayName: 'Install dependencies for projects'
         pool:
           name: Default
         steps:
-          - task: NodeTool@0
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Ensure Node.js is installed'
-            
           - script: |
               cd apps/project-a
               npm install
             displayName: 'Install dependencies for project-a'
 
-      - job: InstallProjectB
-        displayName: 'Install dependencies for project-b'
-        pool:
-          name: Default
-        steps:
-          - task: NodeTool@0
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Ensure Node.js is installed'
-            
           - script: |
               cd apps/project-b
               npm install
@@ -70,11 +52,6 @@ stages:
         pool:
           name: Default
         steps:
-          - task: NodeTool@0
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Ensure Node.js is installed'
-
           - script: |
               moon run project-a:build project-b:build
             displayName: 'moon run projects build'
