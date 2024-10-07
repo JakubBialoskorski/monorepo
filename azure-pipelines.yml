@@ -20,6 +20,10 @@ stages:
           - script: |
               npm install -g @moonrepo/cli
             displayName: 'Install moon'
+          - script: |
+              node -v
+              npm -v
+            displayName: 'Check Node.js and npm versions'
 
   - stage: InstallDependencies
     displayName: 'Install dependencies for projects'
