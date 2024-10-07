@@ -5,18 +5,32 @@ pool:
   name: Default
 
 stages:
-  - stage: InstallDependencies
-    displayName: 'Install dependencies for projects'
+  - stage: Setup
+    displayName: 'Setup tools'
     jobs:
-      - job: InstallProjectA
-        displayName: 'Install dependencies for project-a'
+      - job: SetupTools
+        displayName: 'Install Node.js and tools'
         pool:
           name: Default
         steps:
           - task: NodeTool@0
             inputs:
               versionSpec: '18.x'
-            displayName: 'Ensure Node.js is installed'
+            displayName: 'Install Node.js'
+
+          - script: |
+              npm install -g @moonrepo/cli vue-cli-service react-scripts
+            displayName: 'Install Moon, Vue CLI, and React Scripts'
+
+  - stage: InstallDependencies
+    displayName: 'Install dependencies for projects'
+    dependsOn: Setup
+    jobs:
+      - job: InstallProjectA
+        displayName: 'Install dependencies for project-a'
+        pool:
+          name: Default
+        steps:
           - script: |
               cd apps/project-a
               npm install
@@ -27,10 +41,6 @@ stages:
         pool:
           name: Default
         steps:
-          - task: NodeTool@0
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Ensure Node.js is installed'
           - script: |
               cd apps/project-b
               npm install
@@ -45,17 +55,6 @@ stages:
         pool:
           name: Default
         steps:
-          - task: NodeTool@0
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Ensure Node.js is installed'
-            
-          - script: |
-              npm install -g @moonrepo/cli
-              npm install -g vue-cli-service
-              npm install -g react-scripts
-            displayName: 'Install Moon, Vue CLI, and React Scripts for Build'
-
           - script: |
               moon run project-a:build project-b:build
             displayName: 'moon run projects build'
