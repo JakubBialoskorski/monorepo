@@ -17,13 +17,13 @@ steps:
 
 # Install dependencies for project-a
 - script: |
-    cd project-a
+    cd apps/project-a
     npm install
   displayName: 'Install dependencies for project-a'
 
 # Install dependencies for project-b
 - script: |
-    cd project-b
+    cd apps/project-b
     npm install
   displayName: 'Install dependencies for project-b'
 
