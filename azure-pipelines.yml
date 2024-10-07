@@ -4,26 +4,75 @@ trigger:
 pool:
   name: Default
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '18.x'
-  displayName: 'Install Node.js'
+stages:
+  - stage: Setup
+    displayName: 'Setup tools'
+    jobs:
+      - job: SetupTools
+        displayName: 'Install tools'
+        pool:
+          name: Default
+        steps:
+          # Clean up the temp directory before installation
+          - script: |
+              echo "Cleaning up temp directory..."
+              rm -rf /home/ubuntu/azure_agent/_work/_temp/*
+            displayName: 'Clean temp directory'
 
-- script: |
-    npm install -g @moonrepo/cli
-  displayName: 'Install moon'
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Install Node.js'
 
-- script: |
-    cd apps/project-a
-    npm install
-  displayName: 'Install dependencies for project-a'
+          - script: |
+              npm install -g @moonrepo/cli
+            displayName: 'Install Moon'
 
-- script: |
-    cd apps/project-b
-    npm install
-  displayName: 'Install dependencies for project-b'
+  - stage: InstallDependencies
+    displayName: 'Install dependencies for projects'
+    dependsOn: Setup
+    jobs:
+      - job: InstallProjectA
+        displayName: 'Install dependencies for project-a'
+        pool:
+          name: Default
+        steps:
+          - task: NodeTool@0 # required to avoid npm context issue
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Setup Node.js for project-a'
+          - script: |
+              cd apps/project-a
+              npm ci
+            displayName: 'Install dependencies for project-a'
 
-- script: |
-    moon run project-a:build project-b:build
-  displayName: 'moon run projects build'
+      - job: InstallProjectB
+        displayName: 'Install dependencies for project-b'
+        pool:
+          name: Default
+        steps:
+          - task: NodeTool@0 # required to avoid npm context issue
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Setup Node.js for project-b'
+          - script: |
+              cd apps/project-b
+              npm ci
+            displayName: 'Install dependencies for project-b'
+
+  - stage: Build
+    displayName: 'Build projects'
+    dependsOn: InstallDependencies
+    jobs:
+      - job: BuildProjects
+        displayName: 'Build project-a with Moon'
+        pool:
+          name: Default
+        steps:
+          - task: NodeTool@0 # required to avoid npm context issue
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Setup Node.js for Build'
+          - script: |
+              moon run project-a:build project-b:build
+            displayName: 'moon run projects build'
